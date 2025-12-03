@@ -3,31 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Notes Chat</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #login-box, #chat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 350px;
+            text-align: center;
+        }
+        #chat-box { display: none; width: 90%; max-width: 800px; height: 90vh; }
+        input {
+            width: 90%;
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #0084ff;
+            color: white;
+            border: none;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        h1 { margin-bottom: 10px; }
+    </style>
 </head>
 <body>
-<div id="login-screen">
-    <h2>Enter Password to Join "Notes"</h2>
+
+<div id="login-box">
+    <h1>Enter Password</h1>
     <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">Enter</button>
+    <button onclick="unlockChat()">Enter</button>
+    <p id="error" style="color:red; display:none;">Incorrect password</p>
 </div>
 
-<div id="chat-screen" style="display:none;">
-    <div id="settings">
-        <input id="name" placeholder="Display Name">
-        <input id="pfp" placeholder="Profile Picture URL">
-    </div>
-
-    <div id="messages"></div>
-
-    <div id="send-area">
-        <input id="file" type="file">
-        <input id="msg" placeholder="Type message…">
-        <button onclick="sendMessage()">Send</button>
-    </div>
+<div id="chat-box">
+    <h1>Notes Chat</h1>
+    <!-- Elfsight All-in-One Chat Embed -->
+    <script src="https://elfsightcdn.com/platform.js" async></script>
+    <div class="elfsight-app-05c28733-89e0-44b6-9600-911701620367" data-elfsight-app-lazy></div>
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="script.js"></script>
+<script>
+const CORRECT_PASSWORD = "A+N_1024";
+
+function unlockChat() {
+    const input = document.getElementById("password").value;
+    if(input === CORRECT_PASSWORD) {
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("chat-box").style.display = "block";
+    } else {
+        document.getElementById("error").style.display = "block";
+    }
+}
+</script>
+
 </body>
 </html>
