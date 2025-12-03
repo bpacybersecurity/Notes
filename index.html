@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="login-screen">
+    <h2>Enter Password to Join "Notes"</h2>
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Enter</button>
+</div>
+
+<div id="chat-screen" style="display:none;">
+    <div id="settings">
+        <input id="name" placeholder="Display Name">
+        <input id="pfp" placeholder="Profile Picture URL">
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="send-area">
+        <input id="file" type="file">
+        <input id="msg" placeholder="Type message…">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
