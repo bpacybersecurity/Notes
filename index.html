@@ -1,75 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Notes Chat</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        #login-box, #chat-box {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            width: 350px;
-            text-align: center;
-        }
-        #chat-box { display: none; width: 90%; max-width: 800px; height: 90vh; }
-        input {
-            width: 90%;
-            padding: 8px;
-            margin-top: 10px;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #0084ff;
-            color: white;
-            border: none;
-            margin-top: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        h1 { margin-bottom: 10px; }
-    </style>
+<meta charset="UTF-8">
+<title>Notes Chat</title>
+<style>
+    body { font-family: Arial,sans-serif; background:#f0f0f0; margin:0; padding:0; display:flex; justify-content:center; align-items:center; height:100vh; }
+    #login-box, #chat-box { background:white; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); width:400px; max-width:90%; }
+    #chat-box { display:none; flex-direction:column; height:80vh; }
+    #messages { flex:1; overflow-y:auto; margin-bottom:10px; }
+    .msg { display:flex; margin:5px 0; align-items:flex-end; }
+    .msg.you { justify-content:flex-end; }
+    .msg img { width:40px; height:40px; border-radius:50%; margin-right:10px; }
+    .bubble { padding:10px; border-radius:10px; max-width:70%; }
+    .msg.you .bubble { background:#0084ff; color:white; }
+    .msg.other .bubble { background:#ddd; color:black; }
+    .timestamp { font-size:10px; opacity:0.6; margin-top:2px; }
+    input, button { padding:8px; font-size:14px; margin:5px 0; }
+    #send-area { display:flex; gap:5px; }
+</style>
 </head>
 <body>
 
+<!-- Login Screen -->
 <div id="login-box">
-    <h1>Enter Password</h1>
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="unlockChat()">Enter</button>
+    <h2>Enter Password</h2>
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Enter</button>
     <p id="error" style="color:red; display:none;">Incorrect password</p>
 </div>
 
+<!-- Chat Screen -->
 <div id="chat-box">
-    <h1>Notes Chat</h1>
-    <!-- Elfsight All-in-One Chat Embed -->
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-05c28733-89e0-44b6-9600-911701620367" data-elfsight-app-lazy></div>
+    <div id="settings">
+        <input id="name" placeholder="Display Name">
+        <input id="pfp" placeholder="Profile Picture URL">
+    </div>
+    <div id="messages"></div>
+    <div id="send-area">
+        <input type="file" id="file">
+        <input type="text" id="msg" placeholder="Type a message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
 </div>
 
 <script>
-const CORRECT_PASSWORD = "A+N_1024";
+const PASSWORD = "A+N_1024";
 
-function unlockChat() {
-    const input = document.getElementById("password").value;
-    if(input === CORRECT_PASSWORD) {
+function login(){
+    if(document.getElementById("password").value === PASSWORD){
         document.getElementById("login-box").style.display = "none";
-        document.getElementById("chat-box").style.display = "block";
+        document.getElementById("chat-box").style.display = "flex";
     } else {
         document.getElementById("error").style.display = "block";
     }
+}
+
+function sendMessage(){
+    const text = document.getElementById("msg").value;
+    const fileInput = document.getElementById("file");
+    if(!text && fileInput.files.length===0) return;
+
+    const name = document.getElementById("name").value || "Anonymous";
+    const pfp = document.getElementById("pfp").value || "https://via.placeholder.com/40";
+
+    let fileURL = null;
+    if(fileInput.files.length>0){
+        const file = fileInput.files[0];
+        fileURL = URL.createObjectURL(file);
+    }
+
+    const msgObj = {name,pfp,text,fileURL,timestamp:new Date().toLocaleTimeString(),self:true};
+    displayMessage(msgObj);
+
+    // Reset inputs
+    document.getElementById("msg").value="";
+    fileInput.value="";
+}
+
+function displayMessage(msg){
+    const div = document.createElement("div");
+    div.classList.add("msg");
+    div.classList.add(msg.self ? "you" : "other");
+
+    div.innerHTML = `
+        <img src="${msg.pfp}">
+        <div>
+            <div class="bubble">
+                <strong>${msg.name}</strong><br>
+                ${msg.text ? msg.text : ""}
+                ${msg.fileURL ? `<br><a href="${msg.fileURL}" target="_blank">📎 File</a>` : ""}
+            </div>
+            <div class="timestamp">${msg.timestamp}</div>
+        </div>
+    `;
+    document.getElementById("messages").appendChild(div);
+    div.scrollIntoView({behavior:"smooth"});
 }
 </script>
 
